@@ -6,25 +6,27 @@ public class GenerateMatrixCoefficients implements Command {
         int n = data.getN();
         double[][] matrix = new double[n][n + 1];
 
-        int equalCoefficientNumber = (int) Math.random() * n;
+        int equalCoefficientNumber = (int) (Math.random() * n);
         for (int i = 0; i < n; i++) {
             double sum = 0;
             for (int j = 0; j < n + 1; j++) {
                 if (i != j) {
-                    double coefficient = (double)((int)(Math.random() / 0.001)) / 100;
+                    double coefficient = ((double)((int)Math.round(Math.random() * 1000))) / 100;
+                    if (Math.random() > 0.5) {
+                        coefficient *= -1;
+                    }
                     matrix[i][j] = coefficient;
                     if (j != n) {
-                        sum += coefficient;
+                        sum += Math.abs(coefficient);
                     }
                 }
             }
-            sum = (double)((int)(Math.random() / 0.001)) / 100;
+            sum = ((double)((int)Math.round(sum * 100))) / 100;
             if (i == equalCoefficientNumber) {
                 matrix[i][i] = sum;
             } else {
-                System.out.println(sum);
-                matrix[i][i] = sum + (((int)(Math.random() / 0.1)) + 1);
-                matrix[i][i] = (double)((int)(matrix[i][i] / 0.001)) / 100;
+                matrix[i][i] = sum + ((double)((int)Math.round(Math.random() * 1000))) / 100;
+                matrix[i][i] = ((double)((int)Math.round(matrix[i][i] * 100))) / 100;
             }
         }
 
@@ -32,12 +34,15 @@ public class GenerateMatrixCoefficients implements Command {
         System.out.println("Сгенерированные коэффициенты и свободные члены:");
         for (int i = 0; i < data.getMatrix().length; i++) {
             for (int j = 0; j < data.getMatrix()[0].length; j ++) {
-                System.out.print(data.getMatrix()[i][j] + " ");
+                System.out.printf("%+-7.2f ", data.getMatrix()[i][j]);
+                if (j == n - 1) {
+                    System.out.print("| ");
+                }
             }
             System.out.println();
         }
         Command nextCommand = null; //TODO solve
-        nextCommand.execute(data);
+        //nextCommand.execute(data);
     }
 
 }
