@@ -151,7 +151,7 @@ public class Utils {
                     currentCoefficient = currentCoefficient.replace(",", ".");
                     result[i][j] = Double.parseDouble(currentCoefficient);
                 } catch (NumberFormatException e) {
-                    throw new FileFormatException("Число #" + (j + 1) + " в строке #" + (i + 1) + " матрицы не является десятичной дробью.");
+                    throw new FileFormatException("Значение #" + (j + 1) + " в строке #" + (i + 1) + " матрицы не является десятичной дробью.");
                 }
             }
             i++;

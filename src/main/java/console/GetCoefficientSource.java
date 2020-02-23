@@ -26,7 +26,7 @@ public class GetCoefficientSource implements Command {
                 int answerNumber = Integer.parseInt(answer);
                 switch (answerNumber) {
                     case 1:
-                        //TODO next command
+                        nextCommand = new GetMatrixFromConsole();
                         break command;
                     case 2:
                         nextCommand = new GetMatrixFromFile();
@@ -36,7 +36,7 @@ public class GetCoefficientSource implements Command {
                         break command;
                 }
             } catch (NumberFormatException e) {
-                System.out.println("Вы ввели в качестве ответа не число.");
+                System.out.println("Неизвестный ответ, пожалуйста, введите один из вариантов ответа, предложенных выше.");
             }
             System.out.println("Неизвестный ответ, пожалуйста, введите один из вариантов ответа, предложенных выше.");
         }
