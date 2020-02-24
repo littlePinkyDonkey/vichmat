@@ -3,9 +3,6 @@ package computations;
 public class Solver {
 
     private Data data;
-    private double[][] reducedMatrix;
-    private double[][] transformedMatrix;
-    private double[][] reducedTransformedMatrix;
     private double[][] solvableMatrix;
 
     public Solver(Data data) {
@@ -13,39 +10,10 @@ public class Solver {
     }
 
     public void solve() {
-        double[][] matrix = data.getMatrix();
-        try {
-            reducedMatrix = makeReducedMatrix(matrix);
-        } catch (MatrixTransformException e) {
-            //Не удалось получить сокращенную матрицу. Далее будет произведена попытка получить сокращенную матрицу после диагональных преобразований
-            System.out.println(e.getMessage());
-        }
-        //Проверка достаточного условия сходимости
-        if (reducedMatrix != null && isConverging(reducedMatrix)) {
-            solvableMatrix = reducedMatrix;
-            System.out.println("Изначальная матрица удовлетворяет условию сходимости.");
-        } else {
-            System.out.println("Изначальная матрица не удовлетворяет условию сходимости. Поиск подходящих диагональных преобразований.");
-            try {
-                //Производим диагональные преобразования и сокращаем матрицу
-                transformedMatrix = transformMatrix();
-                reducedTransformedMatrix = makeReducedMatrix(transformedMatrix);
-                //Проверка достаточного условия сходимости
-                if (isConverging(reducedTransformedMatrix)) {
-                    solvableMatrix = reducedTransformedMatrix;
-                    System.out.println("После диагональных преобразований матрица удовлетворяет условию сходимости.");
-                } else {
-                    System.out.println("После диагональных преобразований матрица так и не удовлетворяет условия сходимости. К сожалению, решение найти невозможно.");
-                }
-            } catch (MatrixTransformException e) {
-                //Невозможно достичь диагональных преобразований
-                System.out.print(e.getMessage());
-                System.out.println(" К сожалению, решение найти невозможно.");
-            }
-        }
+        ConvergenceChecker checker = new ConvergenceChecker();
 
         //Проверка, получена ли ранее матрица, удовлетворяющая достаточному условию сходимости метода
-        if (solvableMatrix != null) {
+        if (checker.check()) {
             double[] currentIterationValues = getInitialApproximations();
             double[] previousIterationValues = null;
             int iterationsCount = 0;
@@ -60,85 +28,6 @@ public class Solver {
 
             printResults(currentIterationValues, getErrors(currentIterationValues, previousIterationValues), iterationsCount);
         }
-    }
-
-    private boolean isConverging(double[][] reducedMatrix) {
-        int n = data.getN();
-        double maxSum = 0;
-        for (int i = 0; i < n; i++) {
-            double currentSum = 0;
-            for (int j = 0; j < n; j++) {
-                currentSum += Math.abs(reducedMatrix[i][j]);
-            }
-            if (currentSum > maxSum) {
-                maxSum = currentSum;
-            }
-            if (!(maxSum < 1)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private double[][] makeReducedMatrix(double[][] matrix) throws MatrixTransformException {
-        int n = matrix.length;
-        double[][] reducedMatrix = new double[n][n+1];
-        for (int i = 0; i < n; i++) {
-            if (matrix[i][i] == 0) {
-                //Элемент на главной диагонали равен 0, дальнейшие вычисления сокращенной матрицы невозможны из-за деления на 0
-                throw new MatrixTransformException("Элемент на главной диагонали на строке #" + (i + 1) + " равен 0. Составить сокращенную матрицу невозможно.");
-            }
-            for (int j = 0; j < n + 1; j++) {
-                if (i != j) {
-                    if (j != n) {
-                        reducedMatrix[i][j] = -1 * matrix[i][j] / matrix[i][i];
-                    } else {
-                        reducedMatrix[i][j] = matrix[i][j] / matrix[i][i];
-                    }
-                }
-            }
-            reducedMatrix[i][i] = 0;
-        }
-        return reducedMatrix;
-    }
-
-    private double[][] transformMatrix() throws MatrixTransformException {
-        double[][] matrix = data.getMatrix();
-        int n = matrix.length;
-        int[] maxCoefficientIndexes = new int[n];
-
-        //Ищем максимальные коэффициенты в каждой строке и запоминаем их
-        for (int i = 0; i < n; i++) {
-            double maxCoefficientValue = Math.abs(matrix[i][0]);
-            int maxCoefficientIndex = 0;
-            for (int j = 1; j < n; j++) {
-                if (Math.abs(matrix[i][j]) > maxCoefficientValue){
-                    maxCoefficientValue = Math.abs(matrix[i][j]);
-                    maxCoefficientIndex = j;
-                }
-            }
-            maxCoefficientIndexes[i] = maxCoefficientIndex;
-        }
-
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (i != j){
-                    //Проверяем, нет ли двух строк, где максимален коэффициент при одном и том же неизвестном
-                    if (maxCoefficientIndexes[i] == maxCoefficientIndexes[j]){
-                        //Есть две строки, где коэффициенты при одном и том же неизвестном максимальны. Преобразовать перестановкой матрицу не представляется возможным
-                        throw new MatrixTransformException("Диагональные преобразования невозможны.");
-                    }
-                }
-            }
-        }
-
-        //Делаем перестановку строк, чтобы на главной диагонали находились наибольшие коэффициенты в каждой строке
-        double[][] transformedMatrix = new double[n][n+1];
-        for (int i = 0; i < n; i++) {
-            int currentLineIndex = maxCoefficientIndexes[i];
-            transformedMatrix[currentLineIndex] = matrix[i];
-        }
-        return transformedMatrix;
     }
 
     private double[] getInitialApproximations() {
@@ -186,7 +75,7 @@ public class Solver {
             }
         }
         //Проверяем, достигнута ли заданная точность вычислений
-        if (maxError <= data.getAccuracy()) {
+        if (maxError < data.getAccuracy()) {
             return true;
         } else {
             return false;
@@ -211,6 +100,133 @@ public class Solver {
         for (int i = 0; i < values.length; i++) {
             System.out.printf("%+-32.16f|%+-32.16f\n", values[i], errors[i]);
         }
+    }
+
+    private class ConvergenceChecker {
+
+        private double[][] reducedMatrix;
+        private double[][] transformedMatrix;
+        private double[][] reducedTransformedMatrix;
+
+        public boolean check() {
+            double[][] matrix = data.getMatrix();
+            try {
+                reducedMatrix = makeReducedMatrix(matrix);
+            } catch (MatrixTransformException e) {
+                //Не удалось получить сокращенную матрицу. Далее будет произведена попытка получить сокращенную матрицу после диагональных преобразований
+                System.out.println(e.getMessage());
+            }
+            //Проверка достаточного условия сходимости
+            if (reducedMatrix != null && isConverging(reducedMatrix)) {
+                solvableMatrix = reducedMatrix;
+                System.out.println("Изначальная матрица удовлетворяет условию сходимости.");
+                return true;
+            } else {
+                System.out.println("Изначальная матрица не удовлетворяет условию сходимости. Поиск подходящих диагональных преобразований.");
+                try {
+                    //Производим диагональные преобразования и сокращаем матрицу
+                    transformedMatrix = transformMatrix();
+                    reducedTransformedMatrix = makeReducedMatrix(transformedMatrix);
+                    //Проверка достаточного условия сходимости
+                    if (isConverging(reducedTransformedMatrix)) {
+                        solvableMatrix = reducedTransformedMatrix;
+                        System.out.println("После диагональных преобразований матрица удовлетворяет условию сходимости.");
+                        return true;
+                    } else {
+                        System.out.println("После диагональных преобразований матрица так и не удовлетворяет условия сходимости. К сожалению, решение найти невозможно.");
+                        return false;
+                    }
+                } catch (MatrixTransformException e) {
+                    //Невозможно достичь диагональных преобразований
+                    System.out.print(e.getMessage());
+                    System.out.println(" К сожалению, решение найти невозможно.");
+                    return false;
+                }
+            }
+        }
+
+        private boolean isConverging(double[][] reducedMatrix) {
+            int n = data.getN();
+            double maxSum = 0;
+            for (int i = 0; i < n; i++) {
+                double currentSum = 0;
+                for (int j = 0; j < n; j++) {
+                    currentSum += Math.abs(reducedMatrix[i][j]);
+                }
+                if (currentSum > maxSum) {
+                    maxSum = currentSum;
+                }
+                if (!(maxSum < 1)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private double[][] makeReducedMatrix(double[][] matrix) throws MatrixTransformException {
+            int n = matrix.length;
+            for (int i = 0; i < n; i++) {
+                if (matrix[i][i] == 0) {
+                    //Элемент на главной диагонали равен 0, дальнейшие вычисления сокращенной матрицы невозможны из-за деления на 0
+                    throw new MatrixTransformException("Элемент на главной диагонали на строке #" + (i + 1) + " равен 0. Составить сокращенную матрицу невозможно.");
+                }
+            }
+            double[][] reducedMatrix = new double[n][n+1];
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n + 1; j++) {
+                    if (i != j) {
+                        if (j != n) {
+                            reducedMatrix[i][j] = -1 * matrix[i][j] / matrix[i][i];
+                        } else {
+                            reducedMatrix[i][j] = matrix[i][j] / matrix[i][i];
+                        }
+                    } else {
+                        reducedMatrix[i][j] = 0;
+                    }
+                }
+            }
+            return reducedMatrix;
+        }
+
+        private double[][] transformMatrix() throws MatrixTransformException {
+            double[][] matrix = data.getMatrix();
+            int n = matrix.length;
+            int[] maxCoefficientIndexes = new int[n];
+
+            //Ищем максимальные коэффициенты в каждой строке и запоминаем их
+            for (int i = 0; i < n; i++) {
+                double maxCoefficientValue = Math.abs(matrix[i][0]);
+                int maxCoefficientIndex = 0;
+                for (int j = 1; j < n; j++) {
+                    if (Math.abs(matrix[i][j]) > maxCoefficientValue){
+                        maxCoefficientValue = Math.abs(matrix[i][j]);
+                        maxCoefficientIndex = j;
+                    }
+                }
+                maxCoefficientIndexes[i] = maxCoefficientIndex;
+            }
+
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    if (i != j){
+                        //Проверяем, нет ли двух строк, где максимален коэффициент при одном и том же неизвестном
+                        if (maxCoefficientIndexes[i] == maxCoefficientIndexes[j]){
+                            //Есть две строки, где коэффициенты при одном и том же неизвестном максимальны. Преобразовать перестановкой матрицу не представляется возможным
+                            throw new MatrixTransformException("Диагональные преобразования невозможны.");
+                        }
+                    }
+                }
+            }
+
+            //Делаем перестановку строк, чтобы на главной диагонали находились наибольшие коэффициенты в каждой строке
+            double[][] transformedMatrix = new double[n][n+1];
+            for (int i = 0; i < n; i++) {
+                int currentLineIndex = maxCoefficientIndexes[i];
+                transformedMatrix[currentLineIndex] = matrix[i];
+            }
+            return transformedMatrix;
+        }
+
     }
 
 }
