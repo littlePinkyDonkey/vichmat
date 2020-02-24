@@ -51,6 +51,52 @@ public class Utils {
         }
     }
 
+    public static boolean isBackCommand(String line) {
+        line = line.trim().toLowerCase();
+        if (line.equals("back") || line.equals("назад")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean isNextCommand(String line) {
+        line = line.trim().toLowerCase();
+        if (line.equals("next") || line.equals("вперед")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean isClearCommand(String line) {
+        line = line.trim().toLowerCase();
+        if (line.equals("clear") || line.equals("очистить")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean isMatrixCommand(String line) {
+        line = line.trim().toLowerCase();
+        if (line.equals("matrix") || line.equals("матрица")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean isFinishCommand(String line) {
+        line = line.trim().toLowerCase();
+        if (line.equals("finish") || line.equals("завершить")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
     public static Data readData(String filePath) throws FileNotFoundException, FileFormatException {
         Data result = new Data();
 

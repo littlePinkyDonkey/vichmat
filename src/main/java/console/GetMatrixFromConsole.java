@@ -8,7 +8,12 @@ import java.util.Scanner;
 public class GetMatrixFromConsole implements Command {
 
     public void execute(Data data) throws InterruptCommandException {
-        System.out.println("Введите коэффициенты и свободные члены системы. Чтобы узнать том, как должны быть представлены данные ввода, введите \"help\" или \"помощь\".");
+        System.out.println("Введите коэффициенты и свободные члены системы. Чтобы узнать том, как должны быть представлены данные ввода, введите \"help\" или \"помощь\".\n" +
+                "Чтобы ввести значения для предыдущей строки заново, введите \"back\" или \"назад\"\n" +
+                "Чтобы ввести значения для следующей строки заново, введите \"next\" или \"вперед\"\n" +
+                "Чтобы ввести данные для текущей строки заново, введите \"clear\" или \"очистить\"\n" +
+                "Чтобы вывести текущие введенные значения, введите \"matrix\" или \"матрица\"\n" +
+                "Чтобы завершить ввод данных, введите \"finish\" или \"завершить\"");
         Command nextCommand = null;
         Scanner scanner = Utils.getScanner();
 
@@ -51,6 +56,42 @@ public class GetMatrixFromConsole implements Command {
                         "0 1 4"
                 );
                 continue;
+            } else if (Utils.isBackCommand(answer)) {
+                if (i > 0) {
+                    numberLeft = n + 1;
+                    i--;
+                    System.out.println("Вы переместились на строку #" + (i + 1) + ".");
+                } else {
+                    System.out.println("Это первая строка, нельзя переместиться на еще одну строку назад.");
+                }
+                continue;
+            } else if (Utils.isNextCommand(answer)) {
+                if (i < n) {
+                    numberLeft = n + 1;
+                    i++;
+                    System.out.println("Вы переместились на строку #" + (i + 1) + ".");
+                } else {
+                    System.out.println("Это последняя строка, нельзя переместиться на еще одну строку вперед.");
+                }
+                continue;
+            } else if (Utils.isClearCommand(answer)) {
+                numberLeft = n + 1;
+                System.out.println("Вы переместились к началу строки.");
+            } else if (Utils.isMatrixCommand(answer)) {
+                for (int j = 0; j < result.length; j++) {
+                    for (int k = 0; k < result[0].length; k ++) {
+                        System.out.printf("%+-20.10f ", result[j][k]);
+                        if (k == n - 1) {
+                            System.out.print("| ");
+                        }
+                    }
+                    System.out.println();
+                }
+                continue;
+            } else if (Utils.isFinishCommand(answer)) {
+                System.out.println("Вы завершили ввод матрицы.");
+                data.setMatrix(result);
+                break;
             }
 
             answer = answer.trim();
@@ -73,11 +114,12 @@ public class GetMatrixFromConsole implements Command {
 
             if (numberLeft == 0) {
                 numberLeft = n + 1;
-                i++;
-            }
-            if (i == n) {
-                data.setMatrix(result);
-                break;
+                if (i != n - 1) {
+                    i++;
+                } else {
+                    System.out.println("Вы ввели все значения для последней строки расширенной матрицы\n" +
+                            "Если вы хотите завершить ввод данных, введите \"finish\" или \"завершить\"");
+                }
             }
 
         }

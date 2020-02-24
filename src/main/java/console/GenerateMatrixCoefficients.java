@@ -29,7 +29,7 @@ public class GenerateMatrixCoefficients implements Command {
         }
 
         data.setMatrix(matrix);
-        System.out.println("Сгенерированные коэффициенты и свободные члены:");
+        System.out.println("Сгенерированная расширенная матрица системы:");
         for (int i = 0; i < data.getMatrix().length; i++) {
             for (int j = 0; j < data.getMatrix()[0].length; j ++) {
                 System.out.printf("%+-7.2f ", data.getMatrix()[i][j]);

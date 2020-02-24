@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class GetCoefficientSource implements Command {
 
     public void execute(Data data) throws InterruptCommandException {
-        System.out.println("Введите \"1\", чтобы ввести коэффициенты вручную. Введите \"2\", чтобы загрузить их из файла. Введите \"3\", чтобы сгенерировать случайные коэффициенты.");
+        System.out.println("Введите \"1\", чтобы ввести коэффициенты и свободные члены вручную. Введите \"2\", чтобы загрузить их из файла. Введите \"3\", чтобы сгенерировать случайную расширенную матрицу системы.");
         Command nextCommand = null;
         command: while (nextCommand == null) {
             Scanner scanner = Utils.getScanner();

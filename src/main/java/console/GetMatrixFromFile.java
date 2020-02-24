@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class GetMatrixFromFile implements Command {
 
     public void execute(Data data) throws InterruptCommandException {
-        System.out.println("Введите файл в следующем виде: file <путь до файла>. Чтобы узнать том, как должны быть представлены данные в файле, введите \"help\" или \"помощь\"");
+        System.out.println("Введите файл в следующем виде: file <путь до файла>. Чтобы узнать том, как должны быть представлены данные (расширенная матрица системы) в файле, введите \"help\" или \"помощь\"");
         Command nextCommand = null;
         while (nextCommand == null) {
             Scanner scanner = Utils.getScanner();
