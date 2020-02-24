@@ -186,7 +186,7 @@ public class Solver {
             }
         }
         //Проверяем, достигнута ли заданная точность вычислений
-        if (maxError < data.getAccuracy()) {
+        if (maxError <= data.getAccuracy()) {
             return true;
         } else {
             return false;
