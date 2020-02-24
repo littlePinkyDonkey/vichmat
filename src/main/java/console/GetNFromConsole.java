@@ -36,7 +36,7 @@ public class GetNFromConsole implements Command {
                 data.setN(n);
                 nextCommand = new GetAccuracyFromConsole();
             } catch (NumberFormatException e) {
-                System.out.println("Вы ввели в качестве ответа не целое число.");
+                System.out.println("Вы ввели неизвестный ответ. Введите в качестве ответа одно целое число не меньшее 1, и не большее 20.");
             }
         }
         nextCommand.execute(data);

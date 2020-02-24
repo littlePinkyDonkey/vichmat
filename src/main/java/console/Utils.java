@@ -87,7 +87,7 @@ public class Utils {
                     }
                     return n;
                 } catch (NumberFormatException e) {
-                    throw new FileFormatException("Размерность, указанная в файле, не является целым числом.");
+                    throw new FileFormatException("В файле найден неизвестный ответ для размерности. Запишите в качестве размерности одно целое число не меньшее 1, и не большее 20.");
                 }
             } else {
                 throw new FileFormatException("В строке с размерностью должно быть указано только одно целое число - сама размерность. Исправьте файл (подробнее: введите \"help\").");
@@ -116,10 +116,10 @@ public class Utils {
                     }
                     return accuracy;
                 } catch (NumberFormatException e) {
-                    throw new FileFormatException("Точность, указанная в файле, не является десятичной дробью.");
+                    throw new FileFormatException("В файле найден неизвестный ответ для точности. Запишите в качестве точности одну десятичную дробь, большую 0");
                 }
             } else {
-                throw new FileFormatException("В строке с точностью должно быть указано только одна десятичная дробь - сама точность. Исправьте файл (подробнее: введите \"help\").");
+                throw new FileFormatException("В строке с точностью должна быть указано только одна десятичная дробь - сама точность. Исправьте файл (подробнее: введите \"help\").");
             }
         }
         throw new FileFormatException("Не найдена точность. Исправьте файл (подробнее: введите \"help\").");
@@ -155,10 +155,10 @@ public class Utils {
                 try {
                     String currentCoefficient = coefficientsString[j];
                     currentCoefficient = currentCoefficient.replace(",", ".");
-                    result[i][j] = Double.parseDouble(currentCoefficient);
                     if (currentCoefficient.contains(".") && currentCoefficient.split("\\.")[1].length() > 10) {
                         throw new FileFormatException("Значение #" + (j + 1) + " в строке #" + (i + 1) + " матрицы содержит больше 10 знаков после запятой. Это может сказаться на точности, пожалуйста, запишите это значение с меньшим числом знаков после запятой.");
                     }
+                    result[i][j] = Double.parseDouble(currentCoefficient);
                 } catch (NumberFormatException e) {
                     throw new FileFormatException("Значение #" + (j + 1) + " в строке #" + (i + 1) + " матрицы не является десятичной дробью.");
                 }

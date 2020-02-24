@@ -38,7 +38,7 @@ public class GetAccuracyFromConsole implements Command {
                 data.setAccuracy(accuracy);
                 nextCommand = new GetCoefficientSource();
             } catch (NumberFormatException e) {
-                System.out.println("Вы ввели в качестве ответа не число.");
+                System.out.println("Вы ввели неизвестный ответ. Введите в качестве ответа одну десятичную дробь, большую 0");
             }
         }
         nextCommand.execute(data);
