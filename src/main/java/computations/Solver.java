@@ -64,14 +64,16 @@ public class Solver {
 
     private boolean isConverging(double[][] reducedMatrix) {
         int n = data.getN();
+        double maxSum = 0;
         for (int i = 0; i < n; i++) {
-            double maxValue = 0;
+            double currentSum = 0;
             for (int j = 0; j < n; j++) {
-                if (Math.abs(reducedMatrix[i][j]) > maxValue) {
-                    maxValue = Math.abs(reducedMatrix[i][j]);
-                }
+                currentSum += Math.abs(reducedMatrix[i][j]);
             }
-            if (!(maxValue < 1)) {
+            if (currentSum > maxSum) {
+                maxSum = currentSum;
+            }
+            if (!(maxSum < 1)) {
                 return false;
             }
         }
