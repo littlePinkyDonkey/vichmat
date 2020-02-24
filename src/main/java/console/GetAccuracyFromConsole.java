@@ -1,5 +1,7 @@
 package console;
 
+import computations.Data;
+
 import java.util.Scanner;
 
 public class GetAccuracyFromConsole implements Command {
@@ -22,11 +24,15 @@ public class GetAccuracyFromConsole implements Command {
                 System.exit(0);
             }
 
-            answer.replace(',', '.');
+            answer = answer.replace(',', '.');
             try {
+                if (answer.contains(".") && answer.split("\\.")[1].length() > 12) {
+                    System.out.println("Вы ввели для точности больше 12 знаков после запятой. Это может сказаться на точности, пожалуйста, введите значение точности с меньшим числом знаков после запятой.");
+                    continue;
+                }
                 double accuracy = Double.parseDouble(answer);
-                if (accuracy < 0) {
-                    System.out.println("Введенная точность меньше 0. Пожалуйста, введите точность, которая будет больше или равна 0.");
+                if (accuracy <= 0) {
+                    System.out.println("Введенная точность меньше или равна 0. Пожалуйста, введите точность, которая будет больше 0.");
                     continue;
                 }
                 data.setAccuracy(accuracy);

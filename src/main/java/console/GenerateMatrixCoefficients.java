@@ -1,12 +1,14 @@
 package console;
 
+import computations.Data;
+import computations.Solver;
+
 public class GenerateMatrixCoefficients implements Command {
 
     public void execute(Data data) throws InterruptCommandException {
         int n = data.getN();
         double[][] matrix = new double[n][n + 1];
 
-        int equalCoefficientNumber = (int) (Math.random() * n);
         for (int i = 0; i < n; i++) {
             double sum = 0;
             for (int j = 0; j < n + 1; j++) {
@@ -22,12 +24,8 @@ public class GenerateMatrixCoefficients implements Command {
                 }
             }
             sum = ((double)((int)Math.round(sum * 100))) / 100;
-            if (i == equalCoefficientNumber) {
-                matrix[i][i] = sum;
-            } else {
-                matrix[i][i] = sum + ((double)((int)Math.round(Math.random() * 1000))) / 100;
-                matrix[i][i] = ((double)((int)Math.round(matrix[i][i] * 100))) / 100;
-            }
+            matrix[i][i] = sum + ((double)((int)Math.round(Math.random() * 1000))) / 100;
+            matrix[i][i] = ((double)((int)Math.round(matrix[i][i] * 100))) / 100;
         }
 
         data.setMatrix(matrix);
@@ -41,8 +39,8 @@ public class GenerateMatrixCoefficients implements Command {
             }
             System.out.println();
         }
-        Command nextCommand = null; //TODO solve
-        //nextCommand.execute(data);
+        Solver solver = new Solver(data);
+        solver.solve();
     }
 
 }

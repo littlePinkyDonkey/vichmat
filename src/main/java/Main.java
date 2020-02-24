@@ -1,4 +1,4 @@
-import console.Data;
+import computations.Data;
 import console.InterruptCommandException;
 import console.Introduction;
 
@@ -10,7 +10,7 @@ public class Main {
         boolean working = true;
         System.out.println(
                 "Добро пожаловать!\n" + //TODO rewrite description
-                "Есливы захотите вернуться на предыдущий, введите \"return\" или \"вернуться\".\n" +
+                "Если вы захотите вернуться на предыдущий шаг, введите \"return\" или \"вернуться\".\n" +
                 "Если вы захотите начать ввод данных с нуля, введите \"cancel\" или \"отменить\".\n" +
                 "Если вы захотите выйти из приложения, то введите \"exit\" или \"выйти\"."
         );

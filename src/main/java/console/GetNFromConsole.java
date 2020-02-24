@@ -1,5 +1,7 @@
 package console;
 
+import computations.Data;
+
 import java.util.Scanner;
 
 public class GetNFromConsole implements Command {

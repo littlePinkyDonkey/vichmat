@@ -1,6 +1,8 @@
 package console;
 
-import java.io.FileNotFoundException;
+import computations.Data;
+import computations.Solver;
+
 import java.util.Scanner;
 
 public class GetMatrixFromConsole implements Command {
@@ -63,23 +65,28 @@ public class GetMatrixFromConsole implements Command {
                     String currentCoefficient = answerParts[j];
                     currentCoefficient = currentCoefficient.replace(",", ".");
                     result[i][(n + 1) - numberLeft] = Double.parseDouble(currentCoefficient);
+                    numberLeft--;
                 } catch (NumberFormatException e) {
                     System.out.println("Введенное значение #" + (j + 1) + " не является десятичной дробью.");
                 }
             }
 
-            numberLeft -= answerParts.length;
             if (numberLeft == 0) {
                 numberLeft = n + 1;
                 i++;
             }
             if (i == n) {
                 data.setMatrix(result);
-                //TODO next command
+                break;
             }
 
         }
-        nextCommand.execute(data);
+        if (nextCommand == null) {
+            Solver solver = new Solver(data);
+            solver.solve();
+        } else {
+            nextCommand.execute(data);
+        }
     }
 
 }

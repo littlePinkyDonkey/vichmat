@@ -1,11 +1,13 @@
 package console;
 
+import computations.Data;
+
 import java.util.Scanner;
 
 public class Introduction implements Command {
 
     public void execute(Data data) throws InterruptCommandException {
-        System.out.println("Введите \"1\", чтобы ввести размерность и точность вручную. Введите \"2\", чтобы загрузить все данные из файла. Введите \"3\", чтобы выйти из программы.");
+        System.out.println("Введите \"1\", чтобы ввести размерность и точность вручную. Введите \"2\", чтобы загрузить все данные из файла.");
         Command nextCommand = null;
         command: while (nextCommand == null) {
             Scanner scanner = Utils.getScanner();
@@ -30,10 +32,6 @@ public class Introduction implements Command {
                         break command;
                     case 2:
                         nextCommand = new GetDataFromFile();
-                        break command;
-                    case 3:
-                        System.out.println("Завершение работы программы.");
-                        System.exit(0);
                         break command;
                 }
             } catch (NumberFormatException e) {

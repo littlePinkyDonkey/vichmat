@@ -1,5 +1,8 @@
 package console;
 
+import computations.Data;
+import computations.Solver;
+
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
@@ -42,13 +45,7 @@ public class GetMatrixFromFile implements Command {
             if (answerParts.length == 2 && answerParts[0].toLowerCase().equals("file")) {
                 try {
                     data.setMatrix(Utils.readMatrix(data.getN(), answerParts[1]));
-                    System.out.println(data.getMatrix());//TODO next command
-                    for (int i = 0; i < data.getMatrix().length; i++) {
-                        for (int j = 0; j < data.getMatrix()[0].length; j ++) {
-                            System.out.print(data.getMatrix()[i][j] + " ");
-                        }
-                        System.out.println();
-                    }
+                    break;
                 } catch (FileNotFoundException e) {
                     System.out.println("По введенному пути не найден файл. Проверьте корректность введенного пути.");
                 } catch (FileFormatException e) {
@@ -58,7 +55,12 @@ public class GetMatrixFromFile implements Command {
                 System.out.println("Вы ввели путь до файла в неверном формате");
             }
         }
-        nextCommand.execute(data);
+        if (nextCommand == null) {
+            Solver solver = new Solver(data);
+            solver.solve();
+        } else {
+            nextCommand.execute(data);
+        }
     }
 
 }

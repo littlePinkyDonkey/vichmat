@@ -1,5 +1,8 @@
 package console;
 
+import computations.Data;
+import computations.Solver;
+
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
@@ -47,7 +50,8 @@ public class GetDataFromFile implements Command {
             String[] answerParts = answer.split("\\s+");
             if (answerParts.length == 2 && answerParts[0].toLowerCase().equals("file")) {
                 try {
-                    data = Utils.readData(answerParts[1]);//TODO next command
+                    data = Utils.readData(answerParts[1]);
+                    break;
                 } catch (FileNotFoundException e) {
                     System.out.println("По введенному пути не найден файл. Проверьте корректность введенного пути.");
                 } catch (FileFormatException e) {
@@ -57,7 +61,12 @@ public class GetDataFromFile implements Command {
                 System.out.println("Вы ввели путь до файла в неверном формате");
             }
         }
-        nextCommand.execute(data);
+        if (nextCommand == null) {
+            Solver solver = new Solver(data);
+            solver.solve();
+        } else {
+            nextCommand.execute(data);
+        }
     }
 
 }
