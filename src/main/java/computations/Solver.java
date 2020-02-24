@@ -205,9 +205,9 @@ public class Solver {
 
     private void printResults(double[] values, double[] errors, int iterationsCount) {
         System.out.printf("Получен ответ (количество итераций - %d):\n", iterationsCount);
-        System.out.printf("%-30s|%-30s\n", "Решения", "Погрешности");
+        System.out.printf("%-32s|%-32s\n", "Решения", "Погрешности");
         for (int i = 0; i < values.length; i++) {
-            System.out.printf("%+-30.15f|%+-30.15f\n", values[i], errors[i]);
+            System.out.printf("%+-32.16f|%+-32.16f\n", values[i], errors[i]);
         }
     }
 

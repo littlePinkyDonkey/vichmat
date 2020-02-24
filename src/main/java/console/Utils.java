@@ -151,12 +151,11 @@ public class Utils {
             } else if (coefficientsString.length == 1) {
                 try {
                     coefficientsString[0] = coefficientsString[0].replace(",", ".");
-                    if (coefficientsString[0].contains(".") && coefficientsString[0].split("\\.")[1].length() > 12) {
-                        System.out.println("В файле содержится точность, у которой больше 12 знаков после запятой. Это может сказаться на точности, пожалуйста, запишите точность с меньшим числом знаков после запятой.");
-                        continue;
-                    }
                     double accuracy = Double.parseDouble(coefficientsString[0]);
-                    if (accuracy <= 0) {
+                    if (coefficientsString[0].trim().length() - (coefficientsString[0].contains(".") ? 1 : 0) > 15) {
+                        System.out.println("В файле содержится точность, у которой больше 15 знаков после запятой. Это может сказаться на точности, пожалуйста, запишите точность с меньшим числом знаков после запятой.");
+                        continue;
+                    } else if (accuracy <= 0) {
                         System.out.println();
                         throw new FileFormatException("Введенная точность меньше или равна 0. Пожалуйста, введите точность, которая будет больше 0.");
                     }
@@ -201,10 +200,10 @@ public class Utils {
                 try {
                     String currentCoefficient = coefficientsString[j];
                     currentCoefficient = currentCoefficient.replace(",", ".");
-                    if (currentCoefficient.contains(".") && currentCoefficient.split("\\.")[1].length() > 10) {
-                        throw new FileFormatException("Значение #" + (j + 1) + " в строке #" + (i + 1) + " матрицы содержит больше 10 знаков после запятой. Это может сказаться на точности, пожалуйста, запишите это значение с меньшим числом знаков после запятой.");
-                    }
                     result[i][j] = Double.parseDouble(currentCoefficient);
+                    if (currentCoefficient.trim().length() - (currentCoefficient.contains(".") ? 1 : 0) > 10) {
+                        throw new FileFormatException("Значение #" + (j + 1) + " в строке #" + (i + 1) + " матрицы содержит больше 10 знаков. Это может сказаться на точности, пожалуйста, запишите это значение с меньшим числом знаков.");
+                    }
                 } catch (NumberFormatException e) {
                     throw new FileFormatException("Значение #" + (j + 1) + " в строке #" + (i + 1) + " матрицы не является десятичной дробью.");
                 }

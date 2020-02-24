@@ -106,6 +106,10 @@ public class GetMatrixFromConsole implements Command {
                     String currentCoefficient = answerParts[j];
                     currentCoefficient = currentCoefficient.replace(",", ".");
                     result[i][(n + 1) - numberLeft] = Double.parseDouble(currentCoefficient);
+                    if (currentCoefficient.trim().length() - (currentCoefficient.contains(".") ? 1 : 0) > 10) {
+                        result[i][(n + 1) - numberLeft] = 0;
+                        System.out.println("Значение #" + (j + 1) + " в строке #" + (i + 1) + " матрицы содержит больше 10 знаков. Это может сказаться на точности, пожалуйста, запишите это значение с меньшим числом знаков (сейчас это значение было обнулено).");
+                    }
                     numberLeft--;
                 } catch (NumberFormatException e) {
                     System.out.println("Введенное значение #" + (j + 1) + " не является десятичной дробью.");

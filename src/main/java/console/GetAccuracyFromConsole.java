@@ -26,12 +26,11 @@ public class GetAccuracyFromConsole implements Command {
 
             answer = answer.replace(',', '.');
             try {
-                if (answer.contains(".") && answer.split("\\.")[1].length() > 12) {
-                    System.out.println("Вы ввели для точности больше 12 знаков после запятой. Это может сказаться на точности, пожалуйста, введите значение точности с меньшим числом знаков после запятой.");
-                    continue;
-                }
                 double accuracy = Double.parseDouble(answer);
-                if (accuracy <= 0) {
+                if (answer.trim().length() - (answer.contains(".") ? 1 : 0) > 15) {
+                    System.out.println("Вы ввели для точности больше 15 знаков. Это может сказаться на точности, пожалуйста, введите значение точности с меньшим числом знаков.");
+                    continue;
+                } else if (accuracy <= 0) {
                     System.out.println("Введенная точность меньше или равна 0. Пожалуйста, введите точность, которая будет больше 0.");
                     continue;
                 }
