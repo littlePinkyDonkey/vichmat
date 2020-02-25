@@ -69,9 +69,18 @@ public class Utils {
         }
     }
 
-    public static boolean isClearCommand(String line) {
+    public static boolean isLeftCommand(String line) {
         line = line.trim().toLowerCase();
-        if (line.equals("clear") || line.equals("очистить")) {
+        if (line.equals("left") || line.equals("влево")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean isRightCommand(String line) {
+        line = line.trim().toLowerCase();
+        if (line.equals("right") || line.equals("вправо")) {
             return true;
         } else {
             return false;

@@ -11,7 +11,8 @@ public class GetMatrixFromConsole implements Command {
         System.out.println("Введите коэффициенты и свободные члены системы. Чтобы узнать том, как должны быть представлены данные ввода, введите \"help\" или \"помощь\".\n" +
                 "Чтобы ввести значения для предыдущей строки заново, введите \"back\" или \"назад\"\n" +
                 "Чтобы ввести значения для следующей строки заново, введите \"next\" или \"вперед\"\n" +
-                "Чтобы ввести данные для текущей строки заново, введите \"clear\" или \"очистить\"\n" +
+                "Чтобы переместиться на элемент влево в текущей строке, введите \"left\" или \"влево\"\n" +
+                "Чтобы переместиться на элемент вправо в текущей строке, введите \"right\" или \"вправо\"\n" +
                 "Чтобы вывести текущие введенные значения, введите \"matrix\" или \"матрица\"\n" +
                 "Чтобы завершить ввод данных, введите \"finish\" или \"завершить\"");
         Command nextCommand = null;
@@ -74,9 +75,22 @@ public class GetMatrixFromConsole implements Command {
                     System.out.println("Это последняя строка, нельзя переместиться на еще одну строку вперед.");
                 }
                 continue;
-            } else if (Utils.isClearCommand(answer)) {
-                numberLeft = n + 1;
-                System.out.println("Вы переместились к началу строки.");
+            } else if (Utils.isLeftCommand(answer)) {
+                if (numberLeft < n + 1) {
+                    numberLeft++;
+                    System.out.println("Вы переместились к элементу # " + (numberLeft + 1) + " в строке #" + (i + 1) + ".");
+                } else {
+                    System.out.println("Вы находитесь в начале строки, нельзя переместиться на еще на один элемент влево.");
+                }
+                continue;
+            } else if (Utils.isRightCommand(answer)) {
+                if (numberLeft > 0) {
+                    numberLeft--;
+                    System.out.println("Вы переместились к элементу # " + (numberLeft + 1) + " в строке #" + (i + 1) + ".");
+                } else {
+                    System.out.println("Вы находитесь в конце строки, нельзя переместиться на еще на один элемент вправо.");
+                }
+                continue;
             } else if (Utils.isMatrixCommand(answer)) {
                 for (int j = 0; j < result.length; j++) {
                     for (int k = 0; k < result[0].length; k ++) {
