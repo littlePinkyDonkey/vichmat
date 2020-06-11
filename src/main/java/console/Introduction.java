@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class Introduction implements Command {
 
     public void execute(Data data) throws InterruptCommandException {
-        System.out.println("Введите \"1\", чтобы ввести размерность и точность вручную. Введите \"2\", чтобы загрузить все данные (размерность, точность, расширенную матрицу системы) из файла.");
+        System.out.println("\"1\" - ввести размерность и точность вручную\n\"2\" - чтобы загрузить данные из файла.");
         Command nextCommand = null;
         command: while (nextCommand == null) {
             Scanner scanner = Utils.getScanner();

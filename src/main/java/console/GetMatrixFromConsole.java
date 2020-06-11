@@ -1,7 +1,7 @@
 package console;
 
 import computations.Data;
-import computations.Solver;
+import computations.GaussZeidel;
 
 import java.util.Scanner;
 
@@ -142,8 +142,8 @@ public class GetMatrixFromConsole implements Command {
 
         }
         if (nextCommand == null) {
-            Solver solver = new Solver(data);
-            solver.solve();
+            GaussZeidel gaussZeidel = new GaussZeidel(data);
+            gaussZeidel.solve();
         } else {
             nextCommand.execute(data);
         }

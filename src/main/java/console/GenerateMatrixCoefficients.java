@@ -1,7 +1,7 @@
 package console;
 
 import computations.Data;
-import computations.Solver;
+import computations.GaussZeidel;
 
 public class GenerateMatrixCoefficients implements Command {
 
@@ -39,8 +39,8 @@ public class GenerateMatrixCoefficients implements Command {
             }
             System.out.println();
         }
-        Solver solver = new Solver(data);
-        solver.solve();
+        GaussZeidel gaussZeidel = new GaussZeidel(data);
+        gaussZeidel.solve();
     }
 
 }

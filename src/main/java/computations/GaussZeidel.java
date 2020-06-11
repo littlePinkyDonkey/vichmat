@@ -1,24 +1,23 @@
 package computations;
 
-public class Solver {
+public class GaussZeidel {
 
     private Data data;
     private double[][] solvableMatrix;
 
-    public Solver(Data data) {
+    public GaussZeidel(Data data) {
         this.data = data;
     }
 
     public void solve() {
-        ConvergenceChecker checker = new ConvergenceChecker();
+        DiagonalConvertation checker = new DiagonalConvertation();
 
-        //Проверка, получена ли ранее матрица, удовлетворяющая достаточному условию сходимости метода
         if (checker.check()) {
             double[] currentIterationValues = getInitialApproximations();
             double[] previousIterationValues = null;
             int iterationsCount = 0;
             boolean isSolved = false;
-            //Производим итерации, пока не достигнем необходимой точности вычислений
+
             while (!isSolved) {
                 previousIterationValues = currentIterationValues;
                 currentIterationValues = iterate(currentIterationValues, solvableMatrix);
@@ -48,14 +47,11 @@ public class Solver {
             double previousIterationSum = 0;
             for (int j = 0; j < newValues.length; j++) {
                 if (j < i) {
-                    //Учет вклада промежуточных значений, полученных на текущей итерации
                     currentIterationSum += matrix[i][j] * newValues[j];
                 } else {
-                    //Учет вклада промежуточных значений, полученных на предыдушей итерации
                     previousIterationSum += matrix[i][j] * newValues[j];
                 }
             }
-            //Получение нового промежуточного значения
             double newValue = (matrix[i][n] + currentIterationSum + previousIterationSum);
             newValues[i] = newValue;
         }
@@ -69,12 +65,10 @@ public class Solver {
 
         for (int i = 0; i < n; i++) {
             double currentError = Math.abs(currentIterationValues[i] - previousIterationValues[i]);
-            //Ищем максимальную погрешность среди всех искомых переменных
             if (currentError > maxError) {
                 maxError = currentError;
             }
         }
-        //Проверяем, достигнута ли заданная точность вычислений
         if (maxError < data.getAccuracy()) {
             return true;
         } else {
@@ -102,7 +96,7 @@ public class Solver {
         }
     }
 
-    private class ConvergenceChecker {
+    private class DiagonalConvertation {
 
         private double[][] reducedMatrix;
         private double[][] transformedMatrix;
@@ -113,10 +107,8 @@ public class Solver {
             try {
                 reducedMatrix = makeReducedMatrix(matrix);
             } catch (MatrixTransformException e) {
-                //Не удалось получить сокращенную матрицу. Далее будет произведена попытка получить сокращенную матрицу после достижения диагонального преобладания
                 System.out.println(e.getMessage());
             }
-            //Проверка достаточного условия сходимости
             if (reducedMatrix != null && isConverging(reducedMatrix)) {
                 solvableMatrix = reducedMatrix;
                 System.out.println("Изначальная матрица удовлетворяет условию сходимости.");
@@ -124,10 +116,8 @@ public class Solver {
             } else {
                 System.out.println("Изначальная матрица не удовлетворяет условию сходимости. Поиск подходящих преобразований для достижения диагонального преобладания.");
                 try {
-                    //Производим поиск преобразований для достижения диагонального преобладания и находим сокращенную матрицу
                     transformedMatrix = transformMatrix();
                     reducedTransformedMatrix = makeReducedMatrix(transformedMatrix);
-                    //Проверка достаточного условия сходимости
                     if (isConverging(reducedTransformedMatrix)) {
                         solvableMatrix = reducedTransformedMatrix;
                         System.out.println("После преобразований матрица удовлетворяет условию сходимости.");
@@ -137,9 +127,7 @@ public class Solver {
                         return false;
                     }
                 } catch (MatrixTransformException e) {
-                    //Невозможно достичь диагонального преобладания
-                    System.out.print(e.getMessage());
-                    System.out.println(" К сожалению, решение найти невозможно.");
+                    System.out.print(e.getMessage() + "\nРешение найти невозможно.");
                     return false;
                 }
             }
@@ -167,7 +155,6 @@ public class Solver {
             int n = matrix.length;
             for (int i = 0; i < n; i++) {
                 if (matrix[i][i] == 0) {
-                    //Элемент на главной диагонали равен 0, дальнейшие вычисления сокращенной матрицы невозможны из-за деления на 0
                     throw new MatrixTransformException("Элемент на главной диагонали на строке #" + (i + 1) + " равен 0. Составить сокращенную матрицу невозможно.");
                 }
             }
@@ -193,7 +180,6 @@ public class Solver {
             int n = matrix.length;
             int[] maxCoefficientIndexes = new int[n];
 
-            //Ищем максимальные коэффициенты в каждой строке и запоминаем их
             for (int i = 0; i < n; i++) {
                 double maxCoefficientValue = Math.abs(matrix[i][0]);
                 int maxCoefficientIndex = 0;
@@ -209,16 +195,13 @@ public class Solver {
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
                     if (i != j){
-                        //Проверяем, нет ли двух строк, где максимален коэффициент при одном и том же неизвестном
                         if (maxCoefficientIndexes[i] == maxCoefficientIndexes[j]){
-                            //Есть есть две строки, где коэффициенты при одном и том же неизвестном максимальны, достичь диагонального преобладания перестановкой матрицу не представляется возможным
                             throw new MatrixTransformException("Достичь диагонального преобладания невозможно.");
                         }
                     }
                 }
             }
 
-            //Делаем перестановку строк, чтобы на главной диагонали находились наибольшие коэффициенты в каждой строке
             double[][] transformedMatrix = new double[n][n+1];
             for (int i = 0; i < n; i++) {
                 int currentLineIndex = maxCoefficientIndexes[i];
